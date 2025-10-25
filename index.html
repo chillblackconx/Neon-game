@@ -1,388 +1,98 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Neon Launcher</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neon Launcher - Nova Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 <style>
-  :root{
+  :root {
     --bg:#05050a;
-    --panel: rgba(255,255,255,0.03);
-    --neon1: #7efcff;
-    --neon2: #ff66c4;
-    --accent: #9b7bff;
-    --glass: rgba(255,255,255,0.04);
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    --neon1:#7efcff;
+    --neon2:#ff66c4;
+    --accent:#9b7bff;
+    --glass:rgba(255,255,255,0.04);
+    --card-bg:rgba(10,12,18,0.85);
+    --btn-glow:0 0 12px var(--neon1),0 0 24px var(--neon2);
   }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:
-    radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.08), transparent 8%),
-    radial-gradient(800px 400px at 90% 90%, rgba(14,165,233,0.03), transparent 6%),
-    var(--bg);
-    color:#e9eef8;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-  }
-  header{
-    display:flex;
-    gap:16px;
-    align-items:center;
-    padding:18px 22px;
-    backdrop-filter: blur(6px);
-  }
-  .logo{
-    display:flex;align-items:center;gap:12px;
-    padding:10px 14px;border-radius:12px;
-    background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    box-shadow: 0 6px 20px rgba(123,78,255,0.08), inset 0 1px 0 rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.03);
-  }
-  .logo .dot{
-    width:36px;height:36px;border-radius:8px;
-    background: linear-gradient(135deg,var(--neon1),var(--neon2));
-    box-shadow: 0 6px 28px rgba(124,58,237,0.35), 0 0 18px rgba(126,252,255,0.25);
-    display:flex;align-items:center;justify-content:center;font-weight:700;color:#051021;
-    font-family: "Orbitron", monospace;
-  }
-  h1{font-size:18px;margin:0;}
-  .controls{margin-left:auto;display:flex;gap:10px;align-items:center;}
-  button, .btn {
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    color: #eaf6ff;border:1px solid rgba(255,255,255,0.04);
-    padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:600;
-    box-shadow: 0 6px 18px rgba(2,6,23,0.35);
-  }
-  .btn.neon{
-    background: linear-gradient(90deg,var(--neon1),var(--neon2));
-    color:#041018;border:none;
-    box-shadow: 0 10px 40px rgba(126,252,255,0.14), 0 2px 8px rgba(155,123,255,0.08);
-  }
-  main{padding:22px;display:flex;gap:22px;flex-wrap:wrap;}
-  .left{
-    flex:1 1 320px; min-width:280px; max-width:420px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:14px;padding:16px;border:1px solid rgba(255,255,255,0.03);
-  }
-  .right{flex:2 1 520px; min-width:340px;}
-  .search{
-    display:flex;gap:8px;align-items:center;margin-bottom:12px;
-  }
-  input[type="search"], input[type="text"], input[type="url"]{
-    width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);
-    background:transparent;color:inherit;font-size:14px;
-  }
-  .games-grid{
-    display:grid;grid-template-columns: repeat(auto-fill,minmax(160px,1fr));
-    gap:14px;
-  }
-  .card{
-    border-radius:12px;padding:12px;min-height:130px;
-    background: linear-gradient(180deg, rgba(10,12,18,0.55), rgba(10,12,18,0.42));
-    border:1px solid rgba(255,255,255,0.03);position:relative;overflow:hidden;
-    transition: transform .12s ease, box-shadow .12s ease;
-    cursor: pointer;
-  }
-  .card:hover{ transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,0.6); }
-  .card .thumb{
-    width:64px;height:64px;border-radius:10px;background:#061021;display:flex;align-items:center;justify-content:center;
-    font-size:12px;color:#9fb3c9;margin-bottom:10px; overflow:hidden;
-  }
-  .card h3{margin:0;font-size:14px;line-height:1.1}
-  .card p{margin:6px 0 0;font-size:12px;color:#9fb3c9}
-  .card .actions{position:absolute;right:8px;top:8px;display:flex;gap:6px}
-  .pill{padding:6px 8px;border-radius:8px;background:var(--glass);border:1px solid rgba(255,255,255,0.02);font-size:12px}
-  footer{padding:18px 22px;color:#9fb3c9;font-size:13px}
-  .muted{color:#97a6b9;font-size:13px}
-  .small{font-size:12px}
-  .import-area{display:flex;gap:8px;flex-direction:column}
-  .empty{padding:30px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.01), transparent);text-align:center;color:#a9c2d6}
-  .modal{
-    position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.55);
-  }
-  .dialog{background:linear-gradient(180deg, rgba(16,18,26,0.98), rgba(10,12,18,0.96));padding:18px;border-radius:12px;width:420px;border:1px solid rgba(255,255,255,0.03)}
-  .row{display:flex;gap:8px}
-  .field{margin-bottom:10px}
-  .tiny{font-size:12px;color:#9fb3c9}
-  .actions-right{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
-  .icon-btn{background:transparent;border:0;color:#9fb3c9;font-weight:700;cursor:pointer;padding:6px;border-radius:8px}
-  @media (max-width:800px){
-    main{flex-direction:column}
-    .left,.right{max-width:none}
-  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Orbitron', monospace;color:#e9eef8;background:var(--bg);overflow-x:hidden;}
+  header{display:flex;align-items:center;padding:16px 24px;backdrop-filter:blur(6px);}
+  .logo{display:flex;align-items:center;gap:12px;}
+  .logo .dot{width:40px;height:40px;background:linear-gradient(135deg,var(--neon1),var(--neon2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#051021;font-family:'Orbitron';font-size:24px;}
+  h1{margin:0;font-size:20px;}
+  main{padding:16px;display:flex;flex-direction:column;gap:16px;}
+  .card{display:flex;gap:16px;align-items:center;padding:16px;border-radius:14px;background:var(--card-bg);position:relative;transition:0.3s;cursor:pointer;overflow:hidden;}
+  .card:hover{box-shadow:var(--btn-glow);transform:translateY(-4px);}
+  .card-logo{width:100px;height:100px;border-radius:12px;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#061021;}
+  .card-logo img{width:100%;height:100%;object-fit:cover;}
+  .card-content{flex:1;display:flex;flex-direction:column;gap:8px;}
+  .card-content h2{margin:0;font-size:18px;}
+  .card-content button{padding:10px 16px;border:none;border-radius:10px;background:linear-gradient(90deg,var(--neon1),var(--neon2));color:#041018;font-weight:700;font-size:14px;cursor:pointer;box-shadow:var(--btn-glow);transition:0.2s;}
+  .card-content button:hover{transform:scale(1.05);}
+  audio{display:none;}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 20% 20%, rgba(124,58,237,0.08), transparent 10%),radial-gradient(circle at 80% 80%, rgba(14,165,233,0.05), transparent 8%),var(--bg);}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">
-    <div class="dot">N</div>
-    <div>
-      <h1>Neon Launcher</h1>
-      <div class="tiny">Tes jeux — rapide et stylé</div>
-    </div>
-  </div>
 
-  <div class="controls">
-    <button id="importBtn" class="btn">Importer JSON</button>
-    <button id="exportBtn" class="btn">Exporter JSON</button>
-    <button id="addBtn" class="btn neon">+ Ajouter un jeu</button>
-  </div>
+<header>
+  <div class="logo"><div class="dot">N</div><h1>Neon Launcher</h1></div>
 </header>
 
-<main>
-  <section class="left">
-    <div class="search">
-      <input id="search" type="search" placeholder="Rechercher un jeu..." />
-    </div>
-
-    <div style="margin-bottom:12px">
-      <div class="muted small">Astuce : clique sur une tuile pour ouvrir le jeu. Tu peux importer un JSON exporté ou ajouter manuellement.</div>
-    </div>
-
-    <div class="import-area">
-      <label class="tiny">Importer JSON (colle ici) :</label>
-      <textarea id="importJson" rows="6" style="width:100%;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03);color:inherit;"></textarea>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
-        <button id="doImport" class="btn">Charger</button>
-        <button id="clearAll" class="btn">Supprimer tout</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="right">
-    <div id="grid" class="games-grid" aria-live="polite">
-      <!-- cards inserted here -->
-    </div>
-
-    <div id="emptyMsg" class="empty" style="display:none;margin-top:14px">
-      Aucun jeu pour l'instant — clique sur <strong>+ Ajouter un jeu</strong> ou colle ton JSON à gauche.
-    </div>
-  </section>
+<main id="games-container">
+  <!-- Cartes des jeux seront injectées ici -->
 </main>
 
-<footer>
-  <div class="muted">Neon Launcher • sauvegarde locale (localStorage)</div>
-</footer>
-
-<!-- Modal template -->
-<div id="modal" style="display:none" class="modal" aria-hidden="true">
-  <div class="dialog" role="dialog" aria-modal="true">
-    <h3 id="modalTitle">Ajouter un jeu</h3>
-
-    <div class="field">
-      <label class="tiny">Titre</label>
-      <input id="gTitle" type="text" placeholder="Ex : Mon jeu" />
-    </div>
-    <div class="field">
-      <label class="tiny">URL (adresse du jeu)</label>
-      <input id="gUrl" type="url" placeholder="https://..." />
-    </div>
-    <div class="field">
-      <label class="tiny">Icône (URL, optionnel)</label>
-      <input id="gIcon" type="url" placeholder="https://.../icon.png" />
-    </div>
-
-    <div class="actions-right">
-      <button id="cancelModal" class="btn">Annuler</button>
-      <button id="saveModal" class="btn neon">Enregistrer</button>
-    </div>
-  </div>
-</div>
+<audio id="bgmusic" autoplay loop>
+  <source src="https://cdn.pixabay.com/download/audio/2022/08/23/audio_0b42d8c65f.mp3?filename=sci-fi-ambient-110334.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-(function(){
-  const LS_KEY = 'neon_launcher_games_v1';
-  let games = [];
-
-  const qs = s => document.querySelector(s);
-  const grid = qs('#grid');
-  const searchInput = qs('#search');
-  const emptyMsg = qs('#emptyMsg');
-
-  // Modal controls
-  const modal = qs('#modal');
-  const modalTitle = qs('#modalTitle');
-  const gTitle = qs('#gTitle');
-  const gUrl = qs('#gUrl');
-  const gIcon = qs('#gIcon');
-  let editIndex = -1;
-
-  function load(){
-    try{
-      const raw = localStorage.getItem(LS_KEY);
-      games = raw ? JSON.parse(raw) : [];
-    }catch(e){ games = []; }
-    render();
+const games = [
+  {
+    title: "Nova Virus — Multiplayer",
+    url: "https://nova-virus.vercel.app/",
+    icon: "https://i.imgur.com/fQ0Yv6F.png", // Placeholder logo
+    bg: "linear-gradient(135deg, rgba(0,60,180,0.4), rgba(124,58,237,0.3))"
+  },
+  {
+    title: "EGG BATTLE",
+    url: "https://egg-battle.vercel.app/",
+    icon: "https://i.imgur.com/3K2xk1U.png", // Placeholder logo
+    bg: "linear-gradient(135deg, rgba(255,200,0,0.4), rgba(255,66,180,0.3))"
+  },
+  {
+    title: "Shadow City",
+    url: "https://shadow-citygame.vercel.app/",
+    icon: "https://i.imgur.com/k1L5Z0R.png", // Placeholder logo
+    bg: "linear-gradient(135deg, rgba(0,0,0,0.6), rgba(255,0,255,0.2))"
   }
-  function save(){
-    localStorage.setItem(LS_KEY, JSON.stringify(games));
-  }
+];
 
-  function mkCard(game, idx){
-    const el = document.createElement('div');
-    el.className = 'card';
-    el.tabIndex = 0;
-    el.innerHTML = `
-      <div class="actions">
-        <button class="icon-btn edit" title="Éditer">✎</button>
-        <button class="icon-btn del" title="Supprimer">✕</button>
-      </div>
-      <div class="thumb">${game.icon ? `<img src="${escapeHtml(game.icon)}" alt="" style="width:100%;height:100%;object-fit:cover"/>` : '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="#071226"/></svg>'}</div>
-      <h3>${escapeHtml(game.title)}</h3>
-      <p class="small">${escapeHtml(game.url.replace(/^https?:\\/\\//,'').slice(0,36))}</p>
-    `;
-    // open on main click
-    el.addEventListener('click', (e) => {
-      // ignore if clicked on action button
-      if(e.target.closest('.icon-btn')) return;
-      window.open(game.url, '_blank');
-    });
+const container = document.getElementById('games-container');
 
-    // edit
-    el.querySelector('.edit').addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      openModal('Éditer un jeu', idx);
-    });
-    // delete
-    el.querySelector('.del').addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      if(confirm(`Supprimer "${game.title}" ?`)){
-        games.splice(idx,1);
-        save();
-        render();
-      }
-    });
-    return el;
-  }
+games.forEach(game => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.background = game.bg;
 
-  function render(filter = ''){
-    grid.innerHTML = '';
-    const f = (filter||'').toLowerCase().trim();
-    const shown = games
-      .map((g,i)=>({g,i}))
-      .filter(item => {
-        if(!f) return true;
-        return item.g.title.toLowerCase().includes(f) || (item.g.url||'').toLowerCase().includes(f);
-      });
+  card.innerHTML = `
+    <div class="card-logo"><img src="${game.icon}" alt="${game.title} Logo"/></div>
+    <div class="card-content">
+      <h2>${game.title}</h2>
+      <button>Jouer</button>
+    </div>
+  `;
 
-    if(shown.length === 0){
-      emptyMsg.style.display = games.length ? 'none' : 'block';
-    } else { emptyMsg.style.display = 'none'; }
-
-    shown.forEach(item => {
-      grid.appendChild(mkCard(item.g, item.i));
-    });
-  }
-
-  function openModal(title, idx = -1){
-    modalTitle.textContent = title;
-    editIndex = idx;
-    if(idx >= 0){
-      const g = games[idx];
-      gTitle.value = g.title;
-      gUrl.value = g.url;
-      gIcon.value = g.icon || '';
-    } else {
-      gTitle.value = '';
-      gUrl.value = '';
-      gIcon.value = '';
-    }
-    modal.style.display = 'flex';
-    modal.setAttribute('aria-hidden','false');
-    gTitle.focus();
-  }
-  function closeModal(){
-    modal.style.display = 'none';
-    modal.setAttribute('aria-hidden','true');
-  }
-
-  // safe escape
-  function escapeHtml(s){ if(!s) return ''; return s.replace(/[&<>"']/g, (m)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-
-  // events
-  qs('#addBtn').addEventListener('click', ()=> openModal('Ajouter un jeu'));
-  qs('#cancelModal').addEventListener('click', closeModal);
-  qs('#saveModal').addEventListener('click', ()=> {
-    const title = gTitle.value.trim() || 'Sans titre';
-    const url = gUrl.value.trim();
-    const icon = gIcon.value.trim();
-    if(!url){
-      alert('Il faut une URL valide.');
-      return;
-    }
-    const obj = { title, url, icon };
-    if(editIndex >= 0){
-      games[editIndex] = obj;
-    } else {
-      games.push(obj);
-    }
-    save();
-    render(searchInput.value);
-    closeModal();
+  card.querySelector('button').addEventListener('click', (e)=>{
+    e.stopPropagation();
+    window.open(game.url, '_blank');
   });
 
-  qs('#doImport').addEventListener('click', ()=> {
-    const txt = qs('#importJson').value.trim();
-    if(!txt){ alert('Colle un JSON ici.'); return; }
-    try{
-      const arr = JSON.parse(txt);
-      if(!Array.isArray(arr)) throw new Error('Le JSON doit être un tableau d\'objets {title,url,icon?}');
-      // validate minimal
-      const valid = arr.filter(a => a && a.url && a.title);
-      if(!valid.length){ alert('Aucun élément valide trouvé.'); return; }
-      games = valid;
-      save();
-      render();
-      alert(`Import ok — ${games.length} jeux chargés.`);
-    }catch(e){
-      alert('JSON invalide : ' + e.message);
-    }
-  });
-
-  qs('#importBtn').addEventListener('click', ()=> { qs('#importJson').scrollIntoView({behavior:'smooth',block:'center'}); qs('#importJson').focus(); });
-  qs('#exportBtn').addEventListener('click', ()=> {
-    const data = JSON.stringify(games, null, 2);
-    // download
-    const blob = new Blob([data], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'neon_games.json';
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  });
-
-  qs('#clearAll').addEventListener('click', ()=> {
-    if(confirm('Supprimer tous les jeux ?')){
-      games = [];
-      save();
-      render();
-    }
-  });
-
-  // search
-  searchInput.addEventListener('input', (e)=> render(e.target.value));
-
-  // keyboard: press N to add quickly
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'n' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); openModal('Ajouter un jeu'); }
-  });
-
-  // initial load
-  load();
-
-  // expose a global helper to set games programmatically (for when tu m'enverras les liens)
-  window.__neon_launcher = {
-    setGames: function(arr){
-      if(!Array.isArray(arr)) throw new Error('Attendu: tableau');
-      // map minimal fields
-      games = arr.map(x => ({ title: x.title || 'Sans titre', url: x.url, icon: x.icon || ''})).filter(x=>x.url);
-      save();
-      render();
-    },
-    getGames: function(){ return JSON.parse(JSON.stringify(games)); },
-    clear: function(){ games=[]; save(); render(); }
-  };
-
-})();
+  container.appendChild(card);
+});
 </script>
+
 </body>
 </html>
